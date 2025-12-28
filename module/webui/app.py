@@ -2278,14 +2278,14 @@ class AlasGUI(Frame):
             # First check - happens after initial delay (5 seconds)
             check_and_push_announcement()
             # After first check, set delay to 5 minutes for subsequent checks
-            th._task.delay = 1
+            th._task.delay = 600
             yield
             while True:
                 check_and_push_announcement()
                 yield
 
         # Add announcement checker task (initial delay 1 second)
-        self.task_handler.add(announcement_checker(), delay=1)
+        self.task_handler.add(announcement_checker(), delay=600)
 
         # Return to previous page
         if aside not in ["Home", None]:
