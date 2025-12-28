@@ -646,7 +646,10 @@ class OperationSiren(OSMap):
                     logger.info(f'【智能调度】黄币不足 ({yellow_coins} < {self.config.OpsiHazard1Leveling_YellowCoinPreserve}), 需要执行短猫相接')
                     
                     # 先获取当前行动力数据（包含箱子里的行动力）
+                    # 需要先进入行动力界面才能读取数据
+                    self.action_point_enter()
                     self.action_point_safe_get()
+                    self.action_point_quit()
                     
                     # 使用 cross_get 读取短猫相接任务的行动力保留值（而非当前任务的配置）
                     meow_ap_preserve = int(self.config.cross_get(
