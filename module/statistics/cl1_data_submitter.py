@@ -15,59 +15,9 @@ from typing import Dict, Any, Optional
 
 import requests
 
+from module.base.device_id import get_device_id
+from module.base.api_client import ApiClient
 from module.logger import logger
-
-
-def generate_device_id() -> str:
-    """
-    基于设备信息生成唯一标识符
-    使用多个硬件/系统信息的组合来确保唯一性
-    
-    Returns:
-        str: 32位十六进制字符串作为设备唯一标识
-    """
-    try:
-        # 收集设备信息
-        info_parts = [
-            platform.node(),  # 计算机名
-            platform.machine(),  # 机器类型
-            platform.processor(),  # 处理器信息
-            platform.system(),  # 操作系统
-        ]
-        
-        # 尝试获取MAC地址
-        try:
-            import uuid
-            mac = uuid.getnode()
-            info_parts.append(str(mac))
-        except Exception:
-            pass
-        
-        # 尝试获取磁盘序列号 (Windows)
-        if platform.system() == 'Windows':
-            try:
-                import subprocess
-                result = subprocess.check_output(
-                    'wmic diskdrive get serialnumber',
-                    shell=True,
-                    stderr=subprocess.DEVNULL
-                ).decode('utf-8', errors='ignore')
-                serial = result.split('\n')[1].strip()
-                if serial:
-                    info_parts.append(serial)
-            except Exception:
-                pass
-        
-        # 组合所有信息并生成哈希
-        combined = '|'.join(filter(None, info_parts))
-        device_hash = hashlib.md5(combined.encode('utf-8')).hexdigest()
-        
-        return device_hash
-    except Exception as e:
-        logger.warning(f'Failed to generate device ID: {e}')
-        # 降级方案: 使用随机UUID
-        import uuid
-        return uuid.uuid4().hex
 
 
 class Cl1DataSubmitter:
@@ -92,62 +42,8 @@ class Cl1DataSubmitter:
     
     @property
     def device_id(self) -> str:
-        """获取设备ID (懒加载)"""
-        if self._device_id is None:
-            self._device_id = self._load_or_generate_device_id()
-        return self._device_id
-    
-    def _load_or_generate_device_id(self) -> str:
-        """
-        从文件加载或生成新的设备ID
-        设备ID会被保存到 cl1_monthly.json 中以保持一致性
-        """
-        try:
-            if self.cl1_file.exists():
-                with self.cl1_file.open('r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    if isinstance(data, dict) and 'device_id' in data:
-                        logger.info(f'Loaded existing device ID')
-                        return data['device_id']
-        except Exception as e:
-            logger.warning(f'Failed to load device ID from file: {e}')
-        
-        # 生成新的设备ID
-        device_id = generate_device_id()
-        logger.info(f'Generated new device ID: {device_id[:8]}...')
-        
-        # 保存到文件
-        try:
-            self._save_device_id(device_id)
-        except Exception as e:
-            logger.warning(f'Failed to save device ID: {e}')
-        
-        return device_id
-    
-    def _save_device_id(self, device_id: str):
-        """保存设备ID到cl1_monthly.json"""
-        try:
-            self.cl1_dir.mkdir(parents=True, exist_ok=True)
-            
-            # 读取现有数据
-            data = {}
-            if self.cl1_file.exists():
-                try:
-                    with self.cl1_file.open('r', encoding='utf-8') as f:
-                        data = json.load(f)
-                        if not isinstance(data, dict):
-                            data = {}
-                except Exception:
-                    pass
-            
-            # 添加设备ID
-            data['device_id'] = device_id
-            
-            # 写回文件
-            with self.cl1_file.open('w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            logger.exception(f'Failed to save device ID to file: {e}')
+        """获取设备ID"""
+        return get_device_id()
     
     def collect_data(self, year: int = None, month: int = None) -> Dict[str, Any]:
         """
@@ -275,41 +171,9 @@ class Cl1DataSubmitter:
         Returns:
             是否提交成功
         """
-        try:
-            # 如果没有任何战斗数据,不提交
-            if data.get('battle_count', 0) == 0:
-                logger.info('No CL1 battle data to submit')
-                return False
-            
-            logger.info(f'Submitting CL1 data for {data["month"]}...')
-            logger.attr('battle_count', data['battle_count'])
-            logger.attr('akashi_encounters', data['akashi_encounters'])
-            logger.attr('akashi_probability', f"{data['akashi_probability']:.2%}")
-            
-            response = requests.post(
-                self.endpoint,
-                json=data,
-                timeout=timeout,
-                headers={'Content-Type': 'application/json'}
-            )
-            
-            if response.status_code == 200:
-                logger.info('✓ CL1 data submitted successfully')
-                return True
-            else:
-                logger.warning(f'✗ CL1 data submission failed: HTTP {response.status_code}')
-                logger.warning(f'Response: {response.text[:200]}')
-                return False
-        
-        except requests.exceptions.Timeout:
-            logger.warning(f'CL1 data submission timeout after {timeout}s')
-            return False
-        except requests.exceptions.RequestException as e:
-            logger.warning(f'CL1 data submission failed: {e}')
-            return False
-        except Exception as e:
-            logger.exception(f'Unexpected error during CL1 data submission: {e}')
-            return False
+        # 委托给ApiClient处理
+        ApiClient.submit_cl1_data(data, timeout=timeout)
+        return True
     
     def should_submit(self) -> bool:
         """
@@ -379,4 +243,4 @@ def get_cl1_submitter() -> Cl1DataSubmitter:
     return _submitter
 
 
-__all__ = ['Cl1DataSubmitter', 'get_cl1_submitter', 'generate_device_id']
+__all__ = ['Cl1DataSubmitter', 'get_cl1_submitter']
