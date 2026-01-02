@@ -2798,15 +2798,15 @@
       "Updating": "固件升级中"
     },
     "MenuAlas": {
-      "Overview": "Gui.MenuAlas.Overview",
-      "Log": "Gui.MenuAlas.Log"
+      "Overview": "总览",
+      "Log": "日志"
     },
     "MenuDevelop": {
-      "HomePage": "Gui.MenuDevelop.HomePage",
-      "Translate": "Gui.MenuDevelop.Translate",
-      "Update": "Gui.MenuDevelop.Update",
-      "Remote": "Gui.MenuDevelop.Remote",
-      "Utils": "Gui.MenuDevelop.Utils"
+      "HomePage": "主页",
+      "Translate": "翻译",
+      "Update": "更新",
+      "Remote": "远程",
+      "Utils": "工具"
     },
     "Overview": {
       "Scheduler": "调度视图",
@@ -2820,24 +2820,26 @@
     "Dashboard": {
       "TimeError": "时钟同步异常",
       "JustNow": "刚刚",
-      "MinutesAgo": "Gui.Dashboard.MinutesAgo",
-      "HoursAgo": "Gui.Dashboard.HoursAgo",
-      "DaysAgo": "Gui.Dashboard.DaysAgo",
-      "MonthsAgo": "Gui.Dashboard.MonthsAgo",
-      "LongTimeAgo": "Gui.Dashboard.LongTimeAgo",
-      "NoData": "Gui.Dashboard.NoData",
+      "SecondsAgo": "秒前",
+      "MinutesAgo": "分钟前",
+      "HoursAgo": "小时前",
+      "DaysAgo": "天前",
+      "MonthsAgo": "月前",
+      "YearsAgo": "年前",
+      "LongTimeAgo": "很久之前",
+      "NoData": "无数据",
       "Oil": "石油储量",
       "Coin": "物资资产",
       "Gem": "钻石储备",
-      "Cube": "Gui.Dashboard.Cube",
-      "Pt": "Gui.Dashboard.Pt",
+      "Cube": "魔方储备",
+      "Pt": "活动PT",
       "YellowCoin": "压制凭证 (黄币)",
       "PurpleCoin": "特装凭证 (紫币)",
       "ActionPoint": "大世界动能",
-      "Merit": "Gui.Dashboard.Merit",
-      "Medal": "Gui.Dashboard.Medal",
-      "Core": "Gui.Dashboard.Core",
-      "GuildCoin": "Gui.Dashboard.GuildCoin"
+      "Merit": "功勋值",
+      "Medal": "勋章储备",
+      "Core": "核心数据",
+      "GuildCoin": "舰队币"
     },
     "AddAlas": {
       "PopupTitle": "新建配置实例",
