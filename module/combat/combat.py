@@ -72,12 +72,9 @@ class Combat(Level, HPBalancer, Retirement, SubmarineCall, CombatAuto, CombatMan
         if similarity > 0.85:
             loading = (button.area[0] + 38 - LOADING_BAR.area[0]) / (LOADING_BAR.area[2] - LOADING_BAR.area[0])
             logger.attr('Loading', f'{int(loading * 100)}%')
-            # 提交云端日志用来Debug
-            ApiClient.submit_bug_log('检测到加载条')
             return True
         if self.is_combat_executing():
             logger.warning('检测到战斗状态但未检测到加载条')
-            ApiClient.submit_bug_log('检测到战斗状态但未检测到加载条')
             return True
         return False
 
