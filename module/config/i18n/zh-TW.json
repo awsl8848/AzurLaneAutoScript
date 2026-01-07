@@ -66,10 +66,6 @@
       "name": "活動通用",
       "help": ""
     },
-    "Coalition": {
-      "name": "極地風暴",
-      "help": ""
-    },
     "Event": {
       "name": "活動圖",
       "help": ""
@@ -86,8 +82,8 @@
       "name": "深谷来信劇情",
       "help": ""
     },
-    "HospitalEvent": {
-      "name": "深谷来信",
+    "Coalition": {
+      "name": "極地風暴",
       "help": ""
     },
     "MaritimeEscort": {

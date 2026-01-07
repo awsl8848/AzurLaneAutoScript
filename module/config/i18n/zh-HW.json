@@ -66,10 +66,6 @@
       "name": "活动通用底层",
       "help": ""
     },
-    "Coalition": {
-      "name": "联合演训矩阵",
-      "help": ""
-    },
     "Event": {
       "name": "活动作战流 A",
       "help": ""
@@ -86,9 +82,9 @@
       "name": "深谷通讯链路",
       "help": ""
     },
-    "HospitalEvent": {
-      "name": "Task.HospitalEvent.name",
-      "help": "Task.HospitalEvent.help"
+    "Coalition": {
+      "name": "联合演训矩阵",
+      "help": ""
     },
     "MaritimeEscort": {
       "name": "商路护航保障",

@@ -66,10 +66,6 @@
       "name": "Event General",
       "help": ""
     },
-    "Coalition": {
-      "name": "DATE A LANE",
-      "help": ""
-    },
     "Event": {
       "name": "Event",
       "help": ""
@@ -86,9 +82,9 @@
       "name": "Valley Hospital",
       "help": ""
     },
-    "HospitalEvent": {
-      "name": "Task.HospitalEvent.name",
-      "help": "Task.HospitalEvent.help"
+    "Coalition": {
+      "name": "DATE A LANE",
+      "help": ""
     },
     "MaritimeEscort": {
       "name": "Maritime Escort",

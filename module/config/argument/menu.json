@@ -23,12 +23,11 @@
     "page": "setting",
     "tasks": [
       "EventGeneral",
-      "Coalition",
       "Event",
       "Event2",
       "Raid",
       "Hospital",
-      "HospitalEvent",
+      "Coalition",
       "MaritimeEscort",
       "EventShop",
       "WarArchives"
