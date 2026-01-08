@@ -419,12 +419,12 @@ class InfoHandler(ModuleBase):
                             from module.os_handler.assets import SIREN_OPTION_A, SIREN_OPTION_B, SIREN_OPTION_C
                             
                             # 使用模板匹配检测3个选项
-                            match_a = self.match_template_color(SIREN_OPTION_A, offset=(20, 20))
-                            match_b = self.match_template_color(SIREN_OPTION_B, offset=(20, 20))
-                            match_c = self.match_template_color(SIREN_OPTION_C, offset=(20, 20))
+                            match_a = self.appear(SIREN_OPTION_A, offset=(20, 20), similarity=0.85)
+                            match_b = self.appear(SIREN_OPTION_B, offset=(20, 20), similarity=0.85)
+                            match_c = self.appear(SIREN_OPTION_C, offset=(20, 20), similarity=0.85)
                             
                             # 至少2个选项匹配就认为是塞壬研究装置(容错)
-                            matches = sum([match_a, match_b, match_c])
+                            matches = sum([1 for m in [match_a, match_b, match_c] if m])
                             logger.info(f'[Story] 塞壬研究装置模板匹配结果: A={match_a}, B={match_b}, C={match_c}, 总计={matches}/3')
                             
                             if matches >= 2:
