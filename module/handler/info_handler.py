@@ -415,28 +415,35 @@ class InfoHandler(ModuleBase):
                     if options_count == 3:
                         logger.info('[Story] 检测到3个选项,检查是否为塞壬研究装置')
                         try:
-                            # 导入模板
-                            from module.os_handler.assets import SIREN_OPTION_A, SIREN_OPTION_B, SIREN_OPTION_C
-                            
-                            # 使用模板匹配检测3个选项
-                            sim_a, _ = SIREN_OPTION_A.match_result(self.device.image)
-                            sim_b, _ = SIREN_OPTION_B.match_result(self.device.image)
-                            sim_c, _ = SIREN_OPTION_C.match_result(self.device.image)
-                            
-                            threshold = 0.70
-                            match_a = sim_a > threshold
-                            match_b = sim_b > threshold
-                            match_c = sim_c > threshold
-                            
-                            # 至少2个选项匹配就认为是塞壬研究装置(容错)
-                            matches = sum([1 for m in [match_a, match_b, match_c] if m])
-                            logger.info(f'[Story] 塞壬研究装置模板匹配结果: A={sim_a:.3f}, B={sim_b:.3f}, C={sim_c:.3f}, 阈值={threshold}, 总计={matches}/3')
-                            
-                            if matches >= 2:
-                                is_siren_device = True
-                                logger.info('[Story] ✓ 确认为塞壬研究装置,点击第2个选项(探测隐藏资源)')
-                            else:
-                                logger.info('[Story] ✗ 不是塞壬研究装置,按正常流程处理')
+                            try:
+                                # 模板匹配失效，改用OCR识别
+                                from module.ocr.ocr import Ocr
+                                
+                                keywords = ['探测', '隐藏', '离开', '取消']
+                                match_count = 0
+                                
+                                for i, option in enumerate(options):
+                                    # 对每个选项按钮进行OCR
+                                    # 注意：这里临时实例化OCR可能会有轻微性能开销，但在剧情对话中是可以接受的
+                                    text = Ocr(option, lang='cnocr').ocr(self.device.image)
+                                    logger.info(f'[Story] 选项{i+1} OCR结果: "{text}"')
+                                    
+                                    # 检查关键字
+                                    if any(k in text for k in keywords):
+                                        match_count += 1
+                                
+                                logger.info(f'[Story] 塞壬研究装置OCR匹配结果: {match_count}/3 个选项包含关键字')
+                                
+                                # 3个选项中至少2个包含关键字
+                                if match_count >= 2:
+                                    is_siren_device = True
+                                    logger.info('[Story] ✓ 确认为塞壬研究装置 (OCR验证通过)')
+                                else:
+                                    logger.info('[Story] ✗ 不是塞壬研究装置 (OCR验证不通过)')
+                                    
+                            except Exception as e:
+                                logger.warning(f'[Story] 塞壬研究装置检测异常: {e}')
+                                is_siren_device = False
                         except Exception as e:
                             logger.warning(f'[Story] 塞壬研究装置检测异常: {e}')
                             is_siren_device = False
