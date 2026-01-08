@@ -968,6 +968,20 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
             self.view.show()
 
             grid = self.convert_radar_to_local(grid)
+            
+            # ========== 移动前检查：是否为塞壬研究装置且功能未开启 ==========
+            self.update_os()
+            self.view.predict()
+            # 检查目标格子是否为塞壬研究装置
+            if hasattr(grid, 'is_scanning_device') and grid.is_scanning_device:
+                siren_research_enabled = getattr(self.config, 'OpsiSirenBug_SirenResearch_Enable', False)
+                if not siren_research_enabled:
+                    logger.info(f'[预检查] 格子 {grid} 是塞壬研究装置,但功能未开启,跳过')
+                    self._solved_map_event.add('is_scanning_device')
+                    return True
+                else:
+                    logger.info(f'[预检查] 格子 {grid} 是塞壬研究装置,功能已开启,继续处理')
+            
             self.device.click(grid)
             with self.config.temporary(STORY_ALLOW_SKIP=False):
                 result = self.wait_until_walk_stable(
@@ -1353,9 +1367,9 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
         if 'is_scanning_device' not in self._solved_map_event and grids and grids[0].is_scanning_device:
             grid = grids[0]
             
-            # ========== 地图选择:发现扫描装置 ==========
-            logger.hr('发现扫描装置,开始处理', level=2)
-            logger.info(f'[地图选择] 在 {grid} 位置发现扫描装置')
+            # ========== 地图选择:发现研究装置 ==========
+            logger.hr('发现研究装置,开始处理', level=2)
+            logger.info(f'[地图选择] 在 {grid} 位置发现研究装置')
             
             siren_research_enabled = getattr(self.config, 'OpsiSirenBug_SirenResearch_Enable', False)
             if not siren_research_enabled:
