@@ -476,6 +476,9 @@ class OperationSiren(OSMap):
         # 检查是否启用智能调度
         if not self.config.OpsiScheduling_EnableSmartScheduling:
             return
+        # 检查是否启用推送大世界相关邮件
+        if not self.config.OpsiGeneral_NotifyOpsiMail:
+            return
             
         # 检查是否配置了推送
         # 默认值是 'provider: null'，需要检查 provider 是否有效
@@ -526,8 +529,7 @@ class OperationSiren(OSMap):
         # 检查是否启用智能调度
         if not getattr(self.config, 'OpsiScheduling_EnableSmartScheduling', False):
             return
-            
-        
+                    
         # 获取当前行动力总量
         current_ap = self._action_point_total
         
@@ -795,6 +797,11 @@ class OperationSiren(OSMap):
             yellow_coins = self.get_yellow_coins()
             if self.config.OpsiScheduling_EnableSmartScheduling:
                 # 启用了智能调度
+                if not self.config.is_task_enabled('OpsiMeowfficerFarming'):
+                    self.config.cross_set(keys='OpsiMeowfficerFarming.Scheduler.Enable', value=True)
+                    logger.info('【智能调度】未启用短猫相接任务，强制开启短猫相接')
+                # 我不能理解为什么在启用智能调度后必然会调用短猫但并没有在代码中强制开启
+
                 if yellow_coins < self.config.OpsiHazard1Leveling_OperationCoinsPreserve:
                     logger.info(f'【智能调度】黄币不足 ({yellow_coins} < {self.config.OpsiHazard1Leveling_OperationCoinsPreserve}), 需要执行短猫相接')
 
@@ -811,14 +818,19 @@ class OperationSiren(OSMap):
                     ))
 
                     # 检查行动力是否足够执行短猫相接
+                    _previous_coins_ap_insufficient = getattr(self.config, 'OpsiHazard1_PreviousCoinsApInsufficient', False)
                     if self._action_point_total < meow_ap_preserve:
                         # 行动力也不足，推迟并推送通知
                         logger.warning(f'行动力不足以执行短猫 ({self._action_point_total} < {meow_ap_preserve})')
 
-                        self.notify_push(
-                            title="[Alas] 侵蚀1 - 黄币与行动力双重不足",
-                            content=f"黄币 {yellow_coins} 低于保留值 {self.config.OpsiHazard1Leveling_OperationCoinsPreserve}\n行动力 {self._action_point_total} 不足 (需要 {meow_ap_preserve})\n推迟1小时"
-                        )
+                        if _previous_coins_ap_insufficient == False:
+                            _previous_coins_ap_insufficient = True
+                            self.notify_push(
+                                title="[Alas] 侵蚀1 - 黄币与行动力双重不足",
+                                content=f"黄币 {yellow_coins} 低于保留值 {self.config.OpsiHazard1Leveling_OperationCoinsPreserve}\n行动力 {self._action_point_total} 不足 (需要 {meow_ap_preserve})\n推迟任务"
+                            )
+                        else:
+                            logger.info('上次检查行动力不足，跳过推送邮件')
 
                         logger.info('推迟侵蚀1任务1小时')
                         self.config.task_delay(minute=60)
@@ -826,20 +838,33 @@ class OperationSiren(OSMap):
                     else:
                         # 行动力充足，切换到短猫相接获取黄币
                         logger.info(f'行动力充足 ({self._action_point_total}), 切换到短猫相接获取黄币')
+                        _previous_coins_ap_insufficient = False
                         self.notify_push(
                             title="[Alas] 侵蚀1 - 切换至短猫相接",
                             content=f"黄币 {yellow_coins} 低于保留值 {self.config.OpsiHazard1Leveling_OperationCoinsPreserve}\n行动力: {self._action_point_total} (需要 {meow_ap_preserve})\n切换至短猫相接获取黄币"
                         )
 
                         with self.config.multi_set():
+                            cd = self.nearest_task_cooling_down
+                            if cd is None:
+                                for task in ['OpsiAbyssal', 'OpsiStronghold', 'OpsiObscure']:
+                                    if self.config.is_task_enabled(task):
+                                        self.config.task_call(task)
                             self.config.task_call('OpsiMeowfficerFarming')
                         self.config.task_stop()
+                    self.config.OpsiHazard1_PreviousCoinsApInsufficient = _previous_coins_ap_insufficient
             else:
                 # 未启用智能调度，保持原有逻辑
                 if yellow_coins < self.config.OpsiHazard1Leveling_OperationCoinsPreserve:
                     logger.info(f'Reach the limit of yellow coins, preserve={self.config.OpsiHazard1Leveling_OperationCoinsPreserve}')
                     with self.config.multi_set():
                         self.config.task_delay(server_update=True)
+                        if not self.is_in_opsi_explore():
+                            cd = self.nearest_task_cooling_down
+                            if cd is None:
+                                for task in ['OpsiAbyssal', 'OpsiStronghold', 'OpsiObscure', 'OpsiMeowfficerFarming']:
+                                    if self.config.is_task_enabled(task):
+                                        self.config.task_call(task)
                     self.config.task_stop()
 
             # 获取当前区域
@@ -863,14 +888,22 @@ class OperationSiren(OSMap):
                 if self._action_point_total < min_reserve:
                     logger.warning(f'【智能调度】行动力低于最低保留 ({self._action_point_total} < {min_reserve})')
 
-                    self.notify_push(
-                        title="[Alas] 侵蚀1 - 行动力低于最低保留",
-                        content=f"当前行动力 {self._action_point_total} 低于最低保留 {min_reserve}，推迟1小时"
-                    )
+                    _previous_ap_insufficient = getattr(self.config, 'OpsiHazard1_PreviousApInsufficient', False)
+                    if _previous_ap_insufficient == False:
+                        _previous_ap_insufficient = True
+                        self.notify_push(
+                            title="[Alas] 侵蚀1 - 行动力低于最低保留",
+                            content=f"当前行动力 {self._action_point_total} 低于最低保留 {min_reserve}，推迟任务"
+                        )
+                    else:
+                        logger.info('上次检查行动力低于最低保留，跳过推送邮件')
 
                     logger.info('推迟侵蚀1任务1小时')
                     self.config.task_delay(minute=60)
                     self.config.task_stop()
+                else:
+                    _previous_ap_insufficient = False
+                self.config.OpsiHazard1_PreviousApInsufficient = _previous_ap_insufficient
 
             if self.config.OpsiHazard1Leveling_TargetZone != 0:
                 zone = self.config.OpsiHazard1Leveling_TargetZone
@@ -1072,6 +1105,7 @@ class OperationSiren(OSMap):
             logger.info(f'Last zone: {self.name_to_zone(last_zone)}, next zone: {order[:1]}')
         elif last_zone == 0:
             logger.info(f'First run, next zone: {order[:1]}')
+            self.config.OpsiExplore_SkipedSirenResearch = ''
         else:
             raise ScriptError(f'Invalid last_zone: {last_zone}')
         if not len(order):
@@ -1098,7 +1132,7 @@ class OperationSiren(OSMap):
                 submarine_call=self.config.OpsiFleet_Submarine)
             self._os_explore_task_delay()
 
-            finished_combat = self.run_auto_search()
+            finished_combat = self.run_auto_search(question = False, rescan = 'full')
             self.config.OpsiExplore_LastZone = zone
             logger.info(f'Zone cleared: {self.name_to_zone(zone)}')
             if finished_combat == 0:
