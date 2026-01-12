@@ -1172,7 +1172,7 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
         # Siren bug count sleep
         # Only apply sleep when running OpsiHazard1Leveling (the task that uses the bug exploit)
         if self.config.task.command == 'OpsiHazard1Leveling':
-            count = self.config.OpsiSirenBug_DailyCount
+            count = self.config.OpsiSirenBug_SirenBug_DailyCount
             if count > 0:
                 logger.info(f'Siren bug usage count: {count}, sleep {count}s before auto search')
                 time.sleep(count)
@@ -1971,9 +1971,9 @@ class OSMap(OSFleet, Map, GlobeCamera, StorageHandler, StrategicSearchHandler):
             logger.info('【塞壬Bug利用】返回侵蚀一区域完成')
 
             # Increase bug count
-            self.config.OpsiSirenBug_DailyCount += 1
-            self.config.OpsiSirenBug_DailyCountRecord = datetime.now()
-            count = self.config.OpsiSirenBug_DailyCount
+            self.config.OpsiSirenBug_SirenBug_DailyCount += 1
+            self.config.OpsiSirenBug_SirenBug_DailyCountRecord = datetime.now()
+            count = self.config.OpsiSirenBug_SirenBug_DailyCount
             logger.info(f'Siren bug exploitation successful, daily count: {count}')
 
             self.run_auto_search(question=True, rescan='full', after_auto_search=True)
