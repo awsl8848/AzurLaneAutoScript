@@ -370,7 +370,7 @@ Reward:
     Enable:
       type: switch
       value: true
-      option: [true]
+      option: [true, false]
       option_bold: [true]
     SuccessInterval: 120-240
     FailureInterval: 120-240
