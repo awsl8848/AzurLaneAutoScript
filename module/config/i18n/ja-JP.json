@@ -4142,6 +4142,10 @@
     "ActionPointNotifyLevels": {
       "name": "OpsiScheduling.ActionPointNotifyLevels.name",
       "help": "OpsiScheduling.ActionPointNotifyLevels.help"
+    },
+    "OperationCoinsReturnThreshold": {
+      "name": "OpsiScheduling.OperationCoinsReturnThreshold.name",
+      "help": "OpsiScheduling.OperationCoinsReturnThreshold.help"
     }
   },
   "IslandSeasonTask": {
