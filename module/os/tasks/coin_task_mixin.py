@@ -124,11 +124,16 @@ class CoinTaskMixin:
             default=100000
         )
         
-        # Get OperationCoinsReturnThreshold from common config
-        return_threshold_config = self.config.cross_get(
-            keys='OpsiScheduling.OpsiScheduling.OperationCoinsReturnThreshold',
-            default=None
-        )
+        # Get OperationCoinsReturnThreshold from OpsiScheduling config
+        # Try direct access first (if config is bound), then fallback to cross_get
+        if hasattr(self.config, 'OpsiScheduling_OperationCoinsReturnThreshold'):
+            return_threshold_config = self.config.OpsiScheduling_OperationCoinsReturnThreshold
+        else:
+            # Fallback: use cross_get with correct path (OpsiScheduling is under OpsiHazard1Leveling)
+            return_threshold_config = self.config.cross_get(
+                keys='OpsiHazard1Leveling.OpsiScheduling.OperationCoinsReturnThreshold',
+                default=None
+            )
         
         # If value is 0, disable yellow coin check
         if return_threshold_config == 0:
