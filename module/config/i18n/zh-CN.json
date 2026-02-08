@@ -3795,8 +3795,8 @@
       "help": "默认只购买体力nanoda。如果要购买紫币，设置为 'ActionPoint > PurpleCoins'"
     },
     "NotifyOpsiMail": {
-      "name": "推送大世界相关邮件",
-      "help": "推送关于侵蚀1和短猫的邮件，需要同时开启“推送邮件”功能，由于邮件较多会比较吵"
+      "name": "推送大世界相关信息",
+      "help": "推送关于侵蚀1和短猫的信息，需要同时开启“错误推送”功能，由于信息较多，可能会比较吵"
     }
   },
   "OpsiAshBeacon": {
@@ -4156,7 +4156,7 @@
     },
     "OperationCoinsReturnThreshold": {
       "name": "获取 X 个作战补给凭证",
-      "help": "在黄币获取任务时 共获取到 X 个作战补给凭证后返回侵蚀1练级"
+      "help": "在黄币获取任务时 共获取(增加) X 个作战补给凭证后返回侵蚀1练级"
     },
     "EnableMeowfficerFarming": {
       "name": "启用短猫相接",
