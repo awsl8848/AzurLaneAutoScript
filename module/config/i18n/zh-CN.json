@@ -1390,7 +1390,7 @@
       "help": ""
     },
     "Sacrifice": {
-      "name": "牺牲船位置",
+      "name": "牺牲船位置，用困难+中间站桩",
       "help": "",
       "vanguard": "前排",
       "flagship": "旗舰",
