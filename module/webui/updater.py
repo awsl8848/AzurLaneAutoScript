@@ -137,6 +137,7 @@ class Updater(DeployConfig, GitManager, PipManager):
                 base + f"{owner}/{repo}/branches/{self.Branch}",
                 headers=headers,
                 params=para,
+                timeout=15,
             )
         except Exception as e:
             logger.exception(e)
@@ -164,6 +165,7 @@ class Updater(DeployConfig, GitManager, PipManager):
                 base + f"{owner}/{repo}/commits/" + local_sha,
                 headers=headers,
                 params=para,
+                timeout=15,
             )
         except Exception as e:
             logger.exception(e)
@@ -180,9 +182,22 @@ class Updater(DeployConfig, GitManager, PipManager):
         logger.info(f"Update {sha[:8]} available")
         return 1
 
+    def _check_update_thread(self):
+        """在后台线程中执行更新检查"""
+        try:
+            result = self._check_update()
+            self.state = result
+        except Exception as e:
+            logger.exception(e)
+            self.state = 0
+
     def check_update(self):
         if self.state in (0, "failed", "finish"):
-            self.state = self._check_update()
+            self.state = "checking"
+            threading.Thread(
+                target=self._check_update_thread,
+                daemon=True
+            ).start()
 
     @retry(ExecutionError, tries=3, delay=5, logger=None)
     def git_install(self):
