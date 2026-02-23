@@ -1678,6 +1678,10 @@
     "FeedFilter": {
       "name": "餵食過濾器",
       "help": "一般不需要修改"
+    },
+    "BuyFood": {
+      "name": "Dorm.BuyFood.name",
+      "help": "Dorm.BuyFood.help"
     }
   },
   "BuyFurniture": {
@@ -4392,9 +4396,6 @@
     "SirenDetectorSearch_HazardLevel": {
       "name": "OpsiMeowfficerFarming.SirenDetectorSearch_HazardLevel.name",
       "help": "OpsiMeowfficerFarming.SirenDetectorSearch_HazardLevel.help",
-      "2": "2",
-      "3": "3",
-      "4": "4",
       "5": "5",
       "6": "6"
     },
