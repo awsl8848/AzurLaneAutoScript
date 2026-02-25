@@ -1,1 +1,9 @@
-<svg class="side_status" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12Z" fill="rgb(78,76,151)" /><path d="M11.2426 16.3137L7 12.071L8.41421 10.6568L11.2426 13.4853L16.8995 7.8284L18.3137 9.24262L11.2426 16.3137Z" fill="white" /></svg>
+<svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="50" fill="#2ECC71" />
+  <circle cx="50" cy="50" r="6" fill="white" />
+  <g fill="none" stroke="white" stroke-width="12" stroke-linecap="round">
+    <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="2s" repeatCount="indefinite"/>
+    <path d="M 50 22 A 28 28 0 0 1 78 50" />
+    <path d="M 50 78 A 28 28 0 0 1 22 50" />
+  </g>
+</svg>
