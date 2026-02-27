@@ -1711,10 +1711,6 @@
     "FeedFilter": {
       "name": "喂食过滤器",
       "help": "一般不需要修改"
-    },
-    "BuyFood": {
-      "name": "自动购买食品",
-      "help": "进行委托时,石油溢出时自动购买食品"
     }
   },
   "BuyFurniture": {
