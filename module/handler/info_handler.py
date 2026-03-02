@@ -419,7 +419,7 @@ class InfoHandler(ModuleBase):
                                 # 模板匹配失效，改用OCR识别
                                 from module.ocr.ocr import Ocr
                                 
-                                keywords = ['探测', '隐藏', '离开', '取消']
+                                keywords = ['2', '隐藏', '离开', '取消']
                                 match_count = 0
                                 
                                 for i, option in enumerate(options):
@@ -435,7 +435,7 @@ class InfoHandler(ModuleBase):
                                 logger.info(f'[Story] 塞壬研究装置OCR匹配结果: {match_count}/3 个选项包含关键字')
                                 
                                 # 3个选项中至少2个包含关键字
-                                if match_count >= 2:
+                                if match_count >= 1:
                                     is_siren_device = True
                                     logger.info('[Story] ✓ 确认为塞壬研究装置 (OCR验证通过)')
                                 else:
